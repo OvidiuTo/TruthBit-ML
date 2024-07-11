@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615855908073",
+    "project_id": "truthbit-d6af2",
+    "storage_bucket": "truthbit-d6af2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615855908073:android:63df4b0a3bc8333142fc78",
+        "android_client_info": {
+          "package_name": "com.example.truth_bit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmhU_kcvQy8Rlv5WpsZB7sMyouxThwUD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:truth_bit/pages/EducationResources/education_resources.dart';
 import 'package:truth_bit/pages/FactChecking/fact_checking_view.dart';
+import 'package:truth_bit/pages/Profile/profile.dart';
 import 'package:truth_bit/pages/TopNews/top_news_view.dart';
 import 'package:truth_bit/widgets/navigator_tile.dart';
 
@@ -22,17 +24,14 @@ class _HomePageState extends State<HomePage> {
   List<Widget> pageIndex = [
     const TopNewsView(),
     const FactCheckingView(),
+    const EducationResources(),
     Container(),
     Container(),
-    Container(),
-    Container()
   ];
-
   void _handleTap(int tabNumber) {
     selectedIndex = tabNumber;
     topNews = false;
     factChecking = false;
-    reportMisinformation = false;
     educationalResources = false;
     communityForum = false;
     aboutUs = false;
@@ -44,16 +43,7 @@ class _HomePageState extends State<HomePage> {
         factChecking = true;
         break;
       case 2:
-        reportMisinformation = true;
-        break;
-      case 3:
         educationalResources = true;
-        break;
-      case 4:
-        communityForum = true;
-        break;
-      case 5:
-        aboutUs = true;
         break;
       default:
         break;
@@ -63,40 +53,62 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.tertiary,
-      appBar: AppBar(
+    return PopScope(
+      onPopInvoked: (didPop) {
+        false;
+      },
+      child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.tertiary,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: false,
-        // title: const Text(
-        //   "Truth Bit",
-        //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        // ),
-        title: Row(
-          children: [
-            SizedBox(
-              height: 75,
-              width: 75,
-              child: Image.asset(
-                "assets/TRUTHBIT.png",
-                fit: BoxFit.contain,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: false,
+          title: Row(
+            children: [
+              SizedBox(
+                height: 70,
+                width: 75,
+                child: Image.asset(
+                  "assets/logo_truthbit.png",
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
-            const Text(
-              "Truth Bit",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            )
+              const Text(
+                "Truth Bit",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
+                  return const Profile();
+                })),
+                child: Container(
+                  height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Center(
+                      child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )),
+                ),
+              )
+            ],
+          ),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            customPrefferedSize(),
+            Expanded(child: pageIndex[selectedIndex])
           ],
         ),
-        // bottom: customPrefferedSize(),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          customPrefferedSize(),
-          Expanded(child: pageIndex[selectedIndex])
-        ],
       ),
     );
   }
@@ -127,42 +139,15 @@ class _HomePageState extends State<HomePage> {
                 title: "Fact-Checking",
               ),
             ),
-            // GestureDetector(
-            //   onTap: () {
-            //     _handleTap(2);
-            //   },
-            //   child: NavigatorTile(
-            //     isSelected: reportMisinformation,
-            //     title: "Report Misinformation",
-            //   ),
-            // ),
-            // GestureDetector(
-            //   onTap: () {
-            //     _handleTap(3);
-            //   },
-            //   child: NavigatorTile(
-            //     isSelected: educationalResources,
-            //     title: "Education Resources",
-            //   ),
-            // ),
-            // GestureDetector(
-            //   onTap: () {
-            //     _handleTap(4);
-            //   },
-            //   child: NavigatorTile(
-            //     isSelected: communityForum,
-            //     title: "Community Forum",
-            //   ),
-            // ),
-            // GestureDetector(
-            //   onTap: () {
-            //     _handleTap(5);
-            //   },
-            //   child: NavigatorTile(
-            //     isSelected: aboutUs,
-            //     title: "About Us",
-            //   ),
-            // ),
+            GestureDetector(
+              onTap: () {
+                _handleTap(2);
+              },
+              child: NavigatorTile(
+                isSelected: educationalResources,
+                title: "Education Resources",
+              ),
+            ),
           ],
         ),
       ),

@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:truth_bit/api.dart';
+import 'package:truth_bit/pages/ReportNews/report_news.dart';
 import 'package:truth_bit/pages/TopNews/top_news_expanded.dart';
 import 'package:truth_bit/pages/TopNews/top_news_model.dart';
 import 'package:truth_bit/pages/TopNews/top_news_service.dart';
@@ -18,12 +20,17 @@ class _TopNewsViewState extends State<TopNewsView> {
   List<String> regionList = <String>['United States', 'Romania'];
   String dropdownValue = "";
   String apiCall = "";
+  bool loggedIn = false;
+
   @override
   void initState() {
     dropdownValue = regionList.first;
     apiCall = "$baseUrl$country$apiKeyString";
 
     super.initState();
+    FirebaseAuth.instance.currentUser != null
+        ? loggedIn = true
+        : loggedIn = false;
     getNewsResponse();
   }
 
@@ -88,113 +95,186 @@ class _TopNewsViewState extends State<TopNewsView> {
                 child: ListView.builder(
                   itemCount: newsResponse.articles.length,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return TopNewsExpanded(
-                            index: index,
-                            article: newsResponse.articles[index]);
-                      })),
-                      child: Hero(
-                        tag: index,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          child: Card(
-                            color: Theme.of(context).colorScheme.primary,
-                            child: ListTile(
-                              title: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                child: Text(
-                                  newsResponse.articles[index].title,
-                                  textAlign: TextAlign.justify,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                    if (newsResponse.articles[index].title != '[Removed]') {
+                      return GestureDetector(
+                        onTap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return TopNewsExpanded(
+                              loggedIn: loggedIn,
+                              index: index,
+                              article: newsResponse.articles[index]);
+                        })),
+                        child: Hero(
+                          tag: index,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Card(
+                              color: Theme.of(context).colorScheme.primary,
+                              child: ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
+                                  child: Text(
+                                    newsResponse.articles[index].title,
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      newsResponse.articles[index].description,
-                                      textAlign: TextAlign.justify,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        newsResponse
+                                            .articles[index].description,
+                                        textAlign: TextAlign.justify,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Image.network(
-                                        newsResponse.articles[index].urlToImage,
-                                        errorBuilder: (BuildContext context,
-                                            Object error,
-                                            StackTrace? stackTrace) {
-                                          return Container();
-                                        },
+                                      const SizedBox(
+                                        height: 10,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            newsResponse.articles[index].author,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                      if (newsResponse
+                                              .articles[index].urlToImage !=
+                                          "")
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.5),
+                                                spreadRadius: 5,
+                                                blurRadius: 7,
+                                                offset: const Offset(0,
+                                                    3), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            child: Image.network(
+                                              newsResponse
+                                                  .articles[index].urlToImage,
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object error,
+                                                      StackTrace? stackTrace) {
+                                                return Container();
+                                              },
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            DateFormat.yMMMMd().format(
-                                                DateTime.parse(newsResponse
-                                                    .articles[index]
-                                                    .publishedAt)),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              newsResponse
+                                                  .articles[index].author,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary,
+                                              ),
                                             ),
                                           ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              DateFormat.yMMMMd().format(
+                                                  DateTime.parse(newsResponse
+                                                      .articles[index]
+                                                      .publishedAt)),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      if (loggedIn)
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return ReportNews(
+                                                    reportType: 'unknown',
+                                                    article: newsResponse
+                                                        .articles[index],
+                                                  );
+                                                }));
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  SizedBox(
+                                                    height: 40,
+                                                    width: 50,
+                                                    child: Image.asset(
+                                                      'assets/check.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Classify",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .tertiary,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
+                      );
+                    }
+                    return Container();
                   },
                 ),
               )

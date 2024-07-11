@@ -16,6 +16,17 @@ class Article {
     required this.author,
     required this.content,
   });
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': description,
+      'url': url,
+      'urlToImage': urlToImage,
+      'publishedAt': publishedAt,
+      'author': author,
+      'content': content,
+    };
+  }
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
